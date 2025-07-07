@@ -37,6 +37,7 @@ const localGuardianSchema = z.object({
 // 4) Main Student schema
 export const studentSchema = z.object({
   id: z.string().trim().nonempty({ message: "Student ID is required" }),
+  password: z.string().trim().nonempty({ message: "password is required" }),
   name: userNameSchema,
   gender: z.enum(['male', 'female'], { 
     errorMap: () => ({ message: "Gender must be either 'male' or 'female'" }) 
@@ -62,6 +63,7 @@ export const studentSchema = z.object({
     .url({ message: "Profile image must be a valid URL" })
     .optional(),
   isActive: z.enum(['active', 'blocked']).default('active'),
+  isDeleted: z.boolean()
 });
 
 // 5) Infer TypeScript type if needed

@@ -1,4 +1,5 @@
 import { Schema, model, connect } from 'mongoose'
+import bcrypt from "bcrypt";
 import validator from 'validator';
 import {
   TGuardian,
@@ -8,6 +9,9 @@ import {
   StudentModel,
   TUserName,
 } from './student/student.interface'
+import { studentSchema } from './student/student.validation';
+import config from '../config';
+import { boolean } from 'joi';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -85,6 +89,10 @@ const StudentSchema = new Schema<TStudent,StudentModel>({
     required: [true, "Student ID is required"],
     unique: true
   },
+  password: {
+    type: String,
+    required: [true, "password is required"],
+  },
   name: {
     type: userNameSchema,
     required: [true, "Name is required"]
@@ -142,8 +150,64 @@ const StudentSchema = new Schema<TStudent,StudentModel>({
     enum: ['active', 'blocked'],
     default: 'active'
   },
-}, { timestamps: true })
+  isDeleted:{
+    type: Boolean,
+    default : false
+  },
+}, { timestamps: true ,toJSON:{virtuals : true} })
 
+//virtual 
+
+StudentSchema.virtual('fullname').get(function(){
+  return this.name.firstName +" "+this.name.lastName
+})
+
+//pre save middleware/ hook : will work on create () , save()
+
+StudentSchema.pre('save',async function(next){
+  // console.log(this, 'pre hook : ');
+
+  const user = this 
+
+  //hashing password 
+  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds),);
+  next();
+
+})
+
+//post save middleware /hook 
+StudentSchema.post('save',function(doc,next){
+  doc.password = ''
+
+  next();
+})
+
+
+
+
+//query middleware
+
+StudentSchema.pre('find',function(next){
+  this.find({isDeleted: {$ne : true}});
+  next();
+})
+StudentSchema.pre('findOne',function(next){
+  this.find({isDeleted: {$ne : true}});
+  next();
+})
+
+
+StudentSchema.pre('aggregate',function(next){
+  this.pipeline().unshift({$match : {isDeleted : {$ne : true}}})
+  next();
+})
+//creating a custom static method
+
+StudentSchema.statics.isUserExist = async function(id : string){
+  const existingUser = await Student.findOne({id})
+
+  return existingUser;
+}
 
 
 // creating a custom instance method
