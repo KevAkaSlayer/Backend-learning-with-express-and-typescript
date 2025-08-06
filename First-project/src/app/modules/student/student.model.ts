@@ -8,9 +8,9 @@ import {
   // StudentMethods,
   StudentModel,
   TUserName,
-} from './student/student.interface'
-import { studentSchema } from './student/student.validation';
-import config from '../config';
+} from './student.interface'
+import { studentSchema } from './student.validation';
+import config from '../../config';
 import { boolean } from 'joi';
 
 const userNameSchema = new Schema<TUserName>({
