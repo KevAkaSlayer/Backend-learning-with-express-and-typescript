@@ -1,24 +1,44 @@
+import config from "../../config";
 import { TStudent } from "../student/student.interface";
-import { USer } from "./user.model";
+import { Student } from "../student/student.model";
+import { TUser } from "./user.interface";
+import { User } from "./user.model";
 
 
-const createStudentIntoDB = async (studentData: TStudent) => {
+const createStudentIntoDB = async (password: string, studentData: TStudent) => {
+  // Validate input
+  if (!studentData) {
+    throw new Error('Student data is required');
+  }
 
+  // Create a user object
+  const userData: Partial<TUser> = {};
+  
+  // If password isn't provided, use default pass
+  userData.password = password || (config.default_password as string);
+  
+  // Set student role
+  userData.role = 'student';
 
-//   if( await Student.isUserExist(studentData.id)){
-//     throw new Error ('user already exist!');
-//   }
-  const result = await USer.create(studentData)  // built in static method 
+  // Set manually generated id
+  userData.id = '200023636';
 
-  // const student = new Student(studentData); //create an instance
-  // if(await student.isUserExist(studentData.id)){
-  //   throw new Error("User Already exist!")
-  // }
+  const newUser = await User.create(userData); // built in static method
 
+  // Create student
+  if (Object.keys(newUser).length) {
+    // Create a copy of studentData to avoid modifying the original
+    const studentPayload = {
+      ...studentData,
+      id: newUser.id,
+      user: newUser._id, // reference id
+    };
 
-  // const result = await student.save(); //built in instance method
-  return result;
+    const newStudent = await Student.create(studentPayload);
+    return newStudent;
+  }
 
+  throw new Error('Failed to create user');
 }
 
 export const UserService = {

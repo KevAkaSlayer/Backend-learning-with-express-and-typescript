@@ -1,11 +1,11 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { StudentServices } from './student.service'
 
 
 // import studentValidationSchema from './student.validation'
 
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (req: Request, res: Response ,next: NextFunction) => {
   try {
     const result = await StudentServices.getAllStudentsFromDB()
 
@@ -15,11 +15,11 @@ const getAllStudents = async (req: Request, res: Response) => {
       data: result,
     })
   } catch (err) {
-    console.log(err)
+    next(err)
   }
 }
 
-const getAStudent = async (req: Request, res: Response) => {
+const getAStudent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { studentId: id } = req.params
     const result = await StudentServices.getSingleStudentFromDB(id)
@@ -30,12 +30,12 @@ const getAStudent = async (req: Request, res: Response) => {
       data: result,
     })
   } catch (err) {
-    console.log(err)
+    next(err)
   }
 }
 
 
-const deleteStudent = async (req : Request , res : Response) =>{
+const deleteStudent = async (req : Request , res : Response , next: NextFunction) =>{
   try{
     const {studentId : id} = req.params
 
@@ -51,7 +51,7 @@ const deleteStudent = async (req : Request , res : Response) =>{
 
 
   }catch(err){
-
+    next(err)
   }
 }
 

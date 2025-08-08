@@ -5,13 +5,11 @@ import {
   TGuardian,
   TLocalGuardian,
   TStudent,
-  // StudentMethods,
   StudentModel,
   TUserName,
 } from './student.interface'
-import { studentSchema } from './student.validation';
 import config from '../../config';
-import { boolean } from 'joi';
+
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -89,9 +87,11 @@ const StudentSchema = new Schema<TStudent,StudentModel>({
     required: [true, "Student ID is required"],
     unique: true
   },
-  password: {
-    type: String,
-    required: [true, "password is required"],
+  user:{
+    type: Schema.Types.ObjectId,
+    required: [true, 'User id is required'],
+    unique : true,
+    ref : 'User',
   },
   name: {
     type: userNameSchema,
@@ -145,11 +145,7 @@ const StudentSchema = new Schema<TStudent,StudentModel>({
   profileImage: {
     type: String,
   },
-  isActive: {
-    type: String,
-    enum: ['active', 'blocked'],
-    default: 'active'
-  },
+ 
   isDeleted:{
     type: Boolean,
     default : false
@@ -163,25 +159,6 @@ StudentSchema.virtual('fullname').get(function(){
 })
 
 //pre save middleware/ hook : will work on create () , save()
-
-StudentSchema.pre('save',async function(next){
-  // console.log(this, 'pre hook : ');
-
-  const user = this 
-
-  //hashing password 
-  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds),);
-  next();
-
-})
-
-//post save middleware /hook 
-StudentSchema.post('save',function(doc,next){
-  doc.password = ''
-
-  next();
-})
-
 
 
 
@@ -210,10 +187,5 @@ StudentSchema.statics.isUserExist = async function(id : string){
 }
 
 
-// creating a custom instance method
-// StudentSchema.methods.isUserExist = async function(id : string) {
-//   const existingUser = await Student.findOne({id})
-//   return existingUser;
-// } 
 
 export const Student = model<TStudent,StudentModel>('Student', StudentSchema)

@@ -1,5 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { TUser } from './user.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
 const userSchema = new Schema<TUser>({
     id : {
@@ -36,4 +38,26 @@ const userSchema = new Schema<TUser>({
 
 
 
-export const USer = model<TUser>('User',userSchema);
+userSchema.pre('save',async function(next){
+  // console.log(this, 'pre hook : ');
+
+  const user = this 
+
+  //hashing password only if password exists
+  if (user.password) {
+    user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds),);
+  }
+  next();
+
+})
+
+//post save middleware /hook 
+userSchema.post('save',function(doc,next){
+  doc.password = ''
+
+  next();
+})
+
+
+
+export const User = model<TUser>('User',userSchema);
