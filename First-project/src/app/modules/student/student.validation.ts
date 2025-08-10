@@ -35,36 +35,42 @@ const localGuardianSchema = z.object({
 });
 
 // 4) Main Student schema
-export const studentSchema = z.object({
-  id: z.string().trim().nonempty({ message: "Student ID is required" }),
-  password: z.string().trim().nonempty({ message: "password is required" }),
-  name: userNameSchema,
-  gender: z.enum(['male', 'female'], { 
-    errorMap: () => ({ message: "Gender must be either 'male' or 'female'" }) 
-  }),
-  dateOfBirth: z
-    .string()
-    .optional()
-    .refine((val) => !val || !isNaN(Date.parse(val)), {
-      message: "Date of birth must be a valid date string",
-    }),
-  email: z.string().email({ message: "Email must be valid" }),
-  contactNo: z.string().trim().nonempty({ message: "Contact number is required" }),
-  emergencyContactNo: z.string().trim().nonempty({ message: "Emergency contact number is required" }),
-  bloodGroup: z
-    .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
-    .optional(),
-  presentAddress: z.string().trim().nonempty({ message: "Present address is required" }),
-  permanentAddress: z.string().trim().nonempty({ message: "Permanent address is required" }),
-  guardian: guardianSchema,
-  localGuardian: localGuardianSchema,
-  profileImage: z
-    .string()
-    .url({ message: "Profile image must be a valid URL" })
-    .optional(),
-  isActive: z.enum(['active', 'blocked']).default('active'),
-  isDeleted: z.boolean()
-});
+export const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z.string().trim().nonempty({ message: "password is required" }),
+    student: z.object({
+      name: userNameSchema,
+      gender: z.enum(['male', 'female'], {
+        errorMap: () => ({ message: "Gender must be either 'male' or 'female'" })
+      }),
+      dateOfBirth: z
+        .string()
+        .optional()
+        .refine((val) => !val || !isNaN(Date.parse(val)), {
+          message: "Date of birth must be a valid date string",
+        }),
+      email: z.string().email({ message: "Email must be valid" }),
+      contactNo: z.string().trim().nonempty({ message: "Contact number is required" }),
+      emergencyContactNo: z.string().trim().nonempty({ message: "Emergency contact number is required" }),
+      bloodGroup: z
+        .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+        .optional(),
+      presentAddress: z.string().trim().nonempty({ message: "Present address is required" }),
+      permanentAddress: z.string().trim().nonempty({ message: "Permanent address is required" }),
+      guardian: guardianSchema,
+      localGuardian: localGuardianSchema,
+      profileImage: z
+        .string()
+        .url({ message: "Profile image must be a valid URL" })
+        .optional(),
+    })
+  })
+
+})
 
 // 5) Infer TypeScript type if needed
-export type StudentDto = z.infer<typeof studentSchema>;
+// export type StudentDto = z.infer<typeof studentSchema>;
+
+export const studentValidations = {
+  createStudentValidationSchema,
+};
