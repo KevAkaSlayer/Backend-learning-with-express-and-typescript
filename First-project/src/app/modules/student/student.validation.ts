@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // 1) UserName schema
-const userNameSchema = z.object({
+const userNameValidationSchema = z.object({
   firstName: z
     .string()
     .trim()
@@ -27,7 +27,7 @@ const guardianSchema = z.object({
 });
 
 // 3) LocalGuardian schema
-const localGuardianSchema = z.object({
+const localGuardianValidationSchema = z.object({
   name: z.string().trim().nonempty({ message: "Local guardian name is required" }),
   occupation: z.string().trim().nonempty({ message: "Local guardian occupation is required" }),
   contactNo: z.string().trim().nonempty({ message: "Local guardian contact number is required" }),
@@ -39,12 +39,12 @@ export const createStudentValidationSchema = z.object({
   body: z.object({
     password: z.string().trim().nonempty({ message: "password is required" }),
     student: z.object({
-      name: userNameSchema,
+      name: userNameValidationSchema,
       gender: z.enum(['male', 'female'], {
         errorMap: () => ({ message: "Gender must be either 'male' or 'female'" })
       }),
       dateOfBirth: z
-        .string()
+        .date()
         .optional()
         .refine((val) => !val || !isNaN(Date.parse(val)), {
           message: "Date of birth must be a valid date string",
@@ -58,7 +58,7 @@ export const createStudentValidationSchema = z.object({
       presentAddress: z.string().trim().nonempty({ message: "Present address is required" }),
       permanentAddress: z.string().trim().nonempty({ message: "Permanent address is required" }),
       guardian: guardianSchema,
-      localGuardian: localGuardianSchema,
+      localGuardian: localGuardianValidationSchema,
       profileImage: z
         .string()
         .url({ message: "Profile image must be a valid URL" })
