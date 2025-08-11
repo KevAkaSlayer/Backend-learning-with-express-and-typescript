@@ -44,7 +44,7 @@ export const createStudentValidationSchema = z.object({
         errorMap: () => ({ message: "Gender must be either 'male' or 'female'" })
       }),
       dateOfBirth: z
-        .date()
+        .string()
         .optional()
         .refine((val) => !val || !isNaN(Date.parse(val)), {
           message: "Date of birth must be a valid date string",
@@ -59,6 +59,7 @@ export const createStudentValidationSchema = z.object({
       permanentAddress: z.string().trim().nonempty({ message: "Permanent address is required" }),
       guardian: guardianSchema,
       localGuardian: localGuardianValidationSchema,
+      admissionSemester:z.string(),
       profileImage: z
         .string()
         .url({ message: "Profile image must be a valid URL" })

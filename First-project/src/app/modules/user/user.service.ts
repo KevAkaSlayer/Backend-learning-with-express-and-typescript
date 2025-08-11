@@ -1,13 +1,15 @@
 import config from "../../config";
+import { AcademicSemester } from "../academicSemester/academicSemester.model";
 import { TStudent } from "../student/student.interface";
 import { Student } from "../student/student.model";
 import { TUser } from "./user.interface";
 import { User } from "./user.model";
+import { generateStudentId } from "./user.utils";
 
 
-const createStudentIntoDB = async (password: string, studentData: TStudent) => {
+const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // Validate input
-  if (!studentData) {
+  if (!payload) {
     throw new Error('Student data is required');
   }
 
@@ -20,8 +22,9 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   // Set student role
   userData.role = 'student';
 
+  const admissionSemester = await AcademicSemester.findById(payload.admissionSemester)
   // Set manually generated id
-  userData.id = '200023636';
+  userData.id = generateStudentId(admissionSemester);
 
   const newUser = await User.create(userData); // built in static method
 
@@ -29,7 +32,7 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   if (Object.keys(newUser).length) {
     // Create a copy of studentData to avoid modifying the original
     const studentPayload = {
-      ...studentData,
+      ...payload,
       id: newUser.id,
       user: newUser._id, // reference id
     };

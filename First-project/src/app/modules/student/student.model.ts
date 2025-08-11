@@ -1,5 +1,4 @@
-import { Schema, model, connect } from 'mongoose'
-import bcrypt from "bcrypt";
+import { Schema, model } from 'mongoose'
 import validator from 'validator';
 import {
   TGuardian,
@@ -8,7 +7,6 @@ import {
   StudentModel,
   TUserName,
 } from './student.interface'
-import config from '../../config';
 
 
 const userNameSchema = new Schema<TUserName>({
@@ -144,6 +142,10 @@ const StudentSchema = new Schema<TStudent,StudentModel>({
   },
   profileImage: {
     type: String,
+  },
+  admissionSemester :{
+    type : Schema.Types.ObjectId,
+    ref:'AcademicSemester'
   },
  
   isDeleted:{
