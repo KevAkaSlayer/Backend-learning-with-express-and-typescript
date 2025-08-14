@@ -5,6 +5,7 @@ const userNameValidationSchema = z.object({
   firstName: z
     .string()
     .trim()
+    .max(20)
     .nonempty({ message: "First name is required" })
     .refine((val) => /^[A-Z][a-z]*$/.test(val), {
       message: "First name must start with a capital letter and contain only letters",
@@ -37,7 +38,7 @@ const localGuardianValidationSchema = z.object({
 // 4) Main Student schema
 export const createStudentValidationSchema = z.object({
   body: z.object({
-    password: z.string().trim().nonempty({ message: "password is required" }),
+    password: z.string(),
     student: z.object({
       name: userNameValidationSchema,
       gender: z.enum(['male', 'female'], {
@@ -60,6 +61,7 @@ export const createStudentValidationSchema = z.object({
       guardian: guardianSchema,
       localGuardian: localGuardianValidationSchema,
       admissionSemester:z.string(),
+      academicDept : z.string(),
       profileImage: z
         .string()
         .url({ message: "Profile image must be a valid URL" })

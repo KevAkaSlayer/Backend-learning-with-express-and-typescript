@@ -14,24 +14,14 @@ const userNameSchema = new Schema<TUserName>({
     type: String,
     trim: true,
     required: [true, "First name is required"],
-    validate : {
-      validator : function(value : string){
-        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
-        return firstNameStr === value;  
-      },
-      message : "{VALUE} is not in capitalize format",
-    }
+    maxlength : [20,'Name can not be more than 20 characters'],
   },
   lastName: {
     type: String,
     trim : true,
     required: [true, "Last name is required"],
-    validate: {
-      validator : (value : string)=>validator.isAlpha(value),
-      message: "{VALUE} is not valid",
-    },
   },
-}, { _id: false })
+})
 
 const guardianSchema = new Schema<TGuardian>({
   fatherName: {
@@ -58,7 +48,7 @@ const guardianSchema = new Schema<TGuardian>({
     type: String,
     required: [true, "Mother occupation is required"]
   },
-}, { _id: false })
+})
 
 const localGuardianSchema = new Schema<TLocalGuardian>({
   name: {
@@ -77,7 +67,7 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
     type: String,
     required: [true, "Local guardian address is required"]
   },
-}, { _id: false })
+})
 
 const StudentSchema = new Schema<TStudent,StudentModel>({
   id: {
@@ -107,10 +97,7 @@ const StudentSchema = new Schema<TStudent,StudentModel>({
     type: String,
     required: [true, "Email is required"],
     unique: true,
-    validate:{
-      validator : (value : string)=> validator.isEmail(value),
-      message : "{value} is not valid"
-    }
+    
   },
   contactNo: {
     type: String,
@@ -147,7 +134,10 @@ const StudentSchema = new Schema<TStudent,StudentModel>({
     type : Schema.Types.ObjectId,
     ref:'AcademicSemester'
   },
- 
+  academicDept :{
+    type : Schema.Types.ObjectId,
+    ref : 'AcademicDept'
+  },
   isDeleted:{
     type: Boolean,
     default : false

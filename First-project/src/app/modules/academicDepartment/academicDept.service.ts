@@ -4,12 +4,14 @@ import { AcademicDept } from "./academicDept.model";
 
 const createAcademicDeptIntoDB = async(payload:TAcademicDept)=>{
 
+
+
     const result = await AcademicDept.create(payload);
     return result;
 }
 
 const getAllAcademicDeptFromDB = async()=>{
-    const result = await AcademicDept.find();
+    const result = await AcademicDept.find().populate('academicFaculty');
 
     return result;
 }

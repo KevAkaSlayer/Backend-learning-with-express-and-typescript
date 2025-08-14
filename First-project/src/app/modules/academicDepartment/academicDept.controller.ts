@@ -28,7 +28,7 @@ const getAllAcademyDept = catchAsync(async (req, res) => {
 })
 
 const getSingleAcademyDept = catchAsync(async (req, res) => {
-    const { deptId } = req.params
+    const { deptId } = req.params;
 
     const result = await AcademicDeptServices.getSingleAcademicDeptFromDB(deptId);
     sendResponse(res, {

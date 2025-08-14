@@ -42,7 +42,7 @@ const userSchema = new Schema<TUser>({
 userSchema.pre('save',async function(next){
   // console.log(this, 'pre hook : ');
 
-  const user = this 
+  const user = this; 
 
   //hashing password only if password exists
   if (user.password) {

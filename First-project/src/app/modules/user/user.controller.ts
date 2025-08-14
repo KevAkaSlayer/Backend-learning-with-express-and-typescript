@@ -8,16 +8,9 @@ import catchAsync from "../../utils/catchAsync";
 
 
 const createStudent = catchAsync(
-  async (req, res): Promise<void> => {
+  async (req, res) => {
     const { password, student } = req.body;
-    if (!student) {
-      res.status(400).json({
-        success: false,
-        message: 'Student data is required',
-        error: 'Missing student data in request body',
-      });
-      return;
-    }
+
 
     const result = await UserService.createStudentIntoDB(password, student);
 

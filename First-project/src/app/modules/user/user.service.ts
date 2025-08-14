@@ -24,7 +24,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
 
   const admissionSemester = await AcademicSemester.findById(payload.admissionSemester)
   // Set manually generated id
-  userData.id = generateStudentId(admissionSemester);
+  userData.id = await  generateStudentId(admissionSemester);
 
   const newUser = await User.create(userData); // built in static method
 
