@@ -60,8 +60,8 @@ export const createStudentValidationSchema = z.object({
       permanentAddress: z.string().trim().nonempty({ message: "Permanent address is required" }),
       guardian: guardianSchema,
       localGuardian: localGuardianValidationSchema,
-      admissionSemester:z.string(),
-      academicDept : z.string(),
+      admissionSemester: z.string(),
+      academicDept: z.string(),
       profileImage: z
         .string()
         .url({ message: "Profile image must be a valid URL" })
@@ -71,9 +71,90 @@ export const createStudentValidationSchema = z.object({
 
 })
 
+
+import { z } from 'zod';
+
+// update versions: all fields made optional
+
+export const updateUserNameValidationSchema = z.object({
+  firstName: z
+    .string()
+    .trim()
+    .max(20)
+    .nonempty({ message: "First name is required" })
+    .refine((val) => /^[A-Z][a-z]*$/.test(val), {
+      message: "First name must start with a capital letter and contain only letters",
+    })
+    .optional(),
+  lastName: z
+    .string()
+    .trim()
+    .nonempty({ message: "Last name is required" })
+    .regex(/^[A-Za-z]+$/, { message: "Last name must contain only letters" })
+    .optional(),
+});
+
+export const updateGuardianSchema = z.object({
+  fatherName: z.string().trim().nonempty({ message: "Father name is required" }).optional(),
+  fatherContactNo: z.string().trim().nonempty({ message: "Father contact number is required" }).optional(),
+  fatherOccupation: z.string().trim().nonempty({ message: "Father occupation is required" }).optional(),
+  motherName: z.string().trim().nonempty({ message: "Mother name is required" }).optional(),
+  motherContactNo: z.string().trim().nonempty({ message: "Mother contact number is required" }).optional(),
+  motherOccupation: z.string().trim().nonempty({ message: "Mother occupation is required" }).optional(),
+});
+
+export const updateLocalGuardianValidationSchema = z.object({
+  name: z.string().trim().nonempty({ message: "Local guardian name is required" }).optional(),
+  occupation: z.string().trim().nonempty({ message: "Local guardian occupation is required" }).optional(),
+  contactNo: z.string().trim().nonempty({ message: "Local guardian contact number is required" }).optional(),
+  address: z.string().trim().nonempty({ message: "Local guardian address is required" }).optional(),
+});
+
+export const updateStudentValidationSchema = z.object({
+  body: z
+    .object({
+      student: z
+        .object({
+          name: updateUserNameValidationSchema.optional(),
+          gender: z
+            .enum(['male', 'female'], {
+              errorMap: () => ({ message: "Gender must be either 'male' or 'female'" }),
+            })
+            .optional(),
+          dateOfBirth: z
+            .string()
+            .optional()
+            .refine((val) => !val || !isNaN(Date.parse(val)), {
+              message: "Date of birth must be a valid date string",
+            }),
+          email: z.string().email({ message: "Email must be valid" }).optional(),
+          contactNo: z.string().trim().nonempty({ message: "Contact number is required" }).optional(),
+          emergencyContactNo: z
+            .string()
+            .trim()
+            .nonempty({ message: "Emergency contact number is required" })
+            .optional(),
+          bloodGroup: z
+            .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+            .optional(),
+          presentAddress: z.string().trim().nonempty({ message: "Present address is required" }).optional(),
+          permanentAddress: z.string().trim().nonempty({ message: "Permanent address is required" }).optional(),
+          guardian: updateGuardianSchema.optional(),
+          localGuardian: updateLocalGuardianValidationSchema.optional(),
+          admissionSemester: z.string().optional(),
+          academicDept: z.string().optional(),
+          profileImage: z.string().url({ message: "Profile image must be a valid URL" }).optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+});
+
+
 // 5) Infer TypeScript type if needed
 // export type StudentDto = z.infer<typeof studentSchema>;
 
 export const studentValidations = {
   createStudentValidationSchema,
+  updateStudentValidationSchema
 };
