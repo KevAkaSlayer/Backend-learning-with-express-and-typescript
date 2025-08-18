@@ -29,12 +29,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   //   excludeFields.forEach((el)=> delete queryObj[el]);
 
   // const filterQuery =  searchQuery.find(queryObj)
-  //   .populate('admissionSemester').populate({
-  //     path: 'academicDept',
-  //     populate: {
-  //       path: 'academicFaculty'
-  //     }
-  //   })
+
 
 
   //   let sort = '-createdAt'
@@ -59,7 +54,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 
   //   const paginateQuery = sortQuery.skip(skip);
 
-    
+
   //   const limitQuery =  paginateQuery.limit(limit);
 
   //   //field limiting
@@ -72,7 +67,12 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   //   const fieldQuery = await limitQuery.select(fields);
 
   // return fieldQuery;
-  const studentQuery = new QueryBuilder(Student.find(),query).search(studentSearchableFields).filter().sort().paginate().fields();
+  const studentQuery = new QueryBuilder(Student.find().populate('admissionSemester').populate({
+    path: 'academicDept',
+    populate: {
+      path: 'academicFaculty'
+    }
+  }), query).search(studentSearchableFields).filter().sort().paginate().fields();
 
   const result = await studentQuery.modelQuery;
 
