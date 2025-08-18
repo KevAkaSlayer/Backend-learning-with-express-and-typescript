@@ -147,7 +147,7 @@ export const StudentSchema = new Schema<TStudent,StudentModel>({
 //virtual 
 
 StudentSchema.virtual('fullname').get(function(){
-  return this.name.firstName +" "+this.name.lastName
+  return this?.name?.firstName +" "+this?.name?.lastName
 })
 
 //pre save middleware/ hook : will work on create () , save()
