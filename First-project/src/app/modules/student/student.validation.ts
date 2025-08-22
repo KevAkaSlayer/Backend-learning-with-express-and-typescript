@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // 1) UserName schema
-const userNameValidationSchema = z.object({
+export const userNameValidationSchema = z.object({
   firstName: z
     .string()
     .trim()
@@ -71,8 +71,6 @@ export const createStudentValidationSchema = z.object({
 
 })
 
-
-import { z } from 'zod';
 
 // update versions: all fields made optional
 

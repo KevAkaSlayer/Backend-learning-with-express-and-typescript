@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose'
-import validator from 'validator';
 import {
   TGuardian,
   TLocalGuardian,
@@ -14,11 +13,11 @@ const userNameSchema = new Schema<TUserName>({
     type: String,
     trim: true,
     required: [true, "First name is required"],
-    maxlength : [20,'Name can not be more than 20 characters'],
+    maxlength: [20, 'Name can not be more than 20 characters'],
   },
   lastName: {
     type: String,
-    trim : true,
+    trim: true,
     required: [true, "Last name is required"],
   },
 })
@@ -69,17 +68,17 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   },
 })
 
-export const StudentSchema = new Schema<TStudent,StudentModel>({
+export const StudentSchema = new Schema<TStudent, StudentModel>({
   id: {
     type: String,
     required: [true, "Student ID is required"],
     unique: true
   },
-  user:{
+  user: {
     type: Schema.Types.ObjectId,
     required: [true, 'User id is required'],
-    unique : true,
-    ref : 'User',
+    unique: true,
+    ref: 'User',
   },
   name: {
     type: userNameSchema,
@@ -97,7 +96,7 @@ export const StudentSchema = new Schema<TStudent,StudentModel>({
     type: String,
     required: [true, "Email is required"],
     unique: true,
-    
+
   },
   contactNo: {
     type: String,
@@ -130,24 +129,24 @@ export const StudentSchema = new Schema<TStudent,StudentModel>({
   profileImage: {
     type: String,
   },
-  admissionSemester :{
-    type : Schema.Types.ObjectId,
-    ref:'AcademicSemester'
+  admissionSemester: {
+    type: Schema.Types.ObjectId,
+    ref: 'AcademicSemester'
   },
-  academicDept :{
-    type : Schema.Types.ObjectId,
-    ref : 'AcademicDept'
+  academicDept: {
+    type: Schema.Types.ObjectId,
+    ref: 'AcademicDept'
   },
-  isDeleted:{
+  isDeleted: {
     type: Boolean,
-    default : false
+    default: false
   },
-}, { timestamps: true ,toJSON:{virtuals : true} })
+}, { timestamps: true, toJSON: { virtuals: true } })
 
 //virtual 
 
-StudentSchema.virtual('fullname').get(function(){
-  return this?.name?.firstName +" "+this?.name?.lastName
+StudentSchema.virtual('fullname').get(function () {
+  return this?.name?.firstName + " " + this?.name?.lastName
 })
 
 //pre save middleware/ hook : will work on create () , save()
@@ -156,28 +155,28 @@ StudentSchema.virtual('fullname').get(function(){
 
 //query middleware
 
-StudentSchema.pre('find',function(next){
-  this.find({isDeleted: {$ne : true}});
+StudentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
   next();
 })
-StudentSchema.pre('findOne',function(next){
-  this.find({isDeleted: {$ne : true}});
+StudentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
   next();
 })
 
 
-StudentSchema.pre('aggregate',function(next){
-  this.pipeline().unshift({$match : {isDeleted : {$ne : true}}})
+StudentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } })
   next();
 })
 //creating a custom static method
 
-StudentSchema.statics.isUserExist = async function(id : string){
-  const existingUser = await Student.findOne({id})
+StudentSchema.statics.isUserExist = async function (id: string) {
+  const existingUser = await Student.findOne({ id })
 
   return existingUser;
 }
 
 
 
-export const Student = model<TStudent,StudentModel>('Student', StudentSchema)
+export const Student = model<TStudent, StudentModel>('Student', StudentSchema)

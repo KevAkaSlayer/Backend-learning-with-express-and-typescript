@@ -1,4 +1,4 @@
-import { Types,Schema, model, connect, Model } from 'mongoose'
+import { Types, Model } from 'mongoose'
 
 export type TGuardian = {
   fatherName: string
@@ -36,9 +36,9 @@ export type TStudent = {
   guardian: TGuardian
   localGuardian: TLocalGuardian
   profileImage?: string
-  admissionSemester:Types.ObjectId
-  academicDept : Types.ObjectId
-  isDeleted:boolean
+  admissionSemester: Types.ObjectId
+  academicDept: Types.ObjectId
+  isDeleted: boolean
 }
 
 
@@ -46,8 +46,8 @@ export type TStudent = {
 //for creating static
 
 export interface StudentModel extends Model<TStudent> {
-  isUserExist(id : string) : Promise<TStudent | null>
-} 
+  isUserExist(id: string): Promise<TStudent | null>
+}
 
 
 
