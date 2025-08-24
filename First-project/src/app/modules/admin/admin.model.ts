@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 import { TUserName } from "../student/student.interface";
-import { FacultyModel, TFaculty } from "./faculty.interface";
+import { AdminModel, TAdmin } from "./admin.interface";
+
 
 
 const userNameSchema = new Schema<TUserName>({
@@ -17,10 +18,10 @@ const userNameSchema = new Schema<TUserName>({
   },
 })
 
-const FacultySchema = new Schema<TFaculty>({
+const AdminSchema = new Schema<TAdmin>({
   id: {
     type: String,
-    required: [true, "Faculty ID is required"],
+    required: [true, "Admin ID is required"],
     unique: true
   },
   user: {
@@ -31,7 +32,7 @@ const FacultySchema = new Schema<TFaculty>({
   },
   designation: {
     type: String,
-    required: [true, "Faculty designation is required"]
+    required: [true, "Admin designation is required"]
   },
   name: {
     type: userNameSchema,
@@ -76,10 +77,6 @@ const FacultySchema = new Schema<TFaculty>({
   profileImage: {
     type: String,
   },
-  academicDept: {
-    type: Schema.Types.ObjectId,
-    ref: 'AcademicDept'
-  },
   isDeleted: {
     type: Boolean,
     default: false
@@ -89,30 +86,30 @@ const FacultySchema = new Schema<TFaculty>({
 })
 
 
-FacultySchema.virtual('fullname').get(function () {
+AdminSchema.virtual('fullname').get(function () {
   return this?.name?.firstName + " " + this?.name?.lastName
 })
 
 
 
-FacultySchema.pre('find', function (next) {
+AdminSchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 })
-FacultySchema.pre('findOne', function (next) {
+AdminSchema.pre('findOne', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 })
 
 
-FacultySchema.pre('aggregate', function (next) {
+AdminSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } })
   next();
 })
 //creating a custom static method
 
-FacultySchema.statics.isUserExist = async function (id: string) {
-  const existingUser = await Faculty.findOne({ id })
+AdminSchema.statics.isUserExist = async function (id: string) {
+  const existingUser = await Admin.findOne({ id })
 
   return existingUser;
 }
@@ -120,4 +117,4 @@ FacultySchema.statics.isUserExist = async function (id: string) {
 
 
 
-export const Faculty = model<TFaculty, FacultyModel>('Faculty', FacultySchema);
+export const Admin = model<TAdmin,AdminModel>('Admin', AdminSchema);

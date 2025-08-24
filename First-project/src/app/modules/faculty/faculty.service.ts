@@ -31,7 +31,7 @@ const deleteFacultyFromDB = async (id: string) => {
 
         session.startTransaction();
 
-        const deletedFaculty = await Faculty.findOneAndUpdate({id}, { isDeleted: true }, { new: true, session });
+        const deletedFaculty = await Faculty.findOneAndUpdate({ id }, { isDeleted: true }, { new: true, session });
 
         if (!deletedFaculty) {
             throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Faculty');
