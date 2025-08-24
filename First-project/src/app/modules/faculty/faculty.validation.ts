@@ -5,9 +5,9 @@ import { updateUserNameValidationSchema, userNameValidationSchema } from "../stu
 export const createFacultyValidationSchema = z.object({
   body: z.object({
     password: z.string(),
-    student: z.object({
+    faculty: z.object({
       name: userNameValidationSchema,
-      designation : z.string().nonempty({ message: "Designation is required" }),
+      designation: z.string().nonempty({ message: "Designation is required" }),
       gender: z.enum(['male', 'female'], {
         errorMap: () => ({ message: "Gender must be either 'male' or 'female'" })
       }),
@@ -39,10 +39,10 @@ export const createFacultyValidationSchema = z.object({
 export const updateFacultyValidationSchema = z.object({
   body: z
     .object({
-      student: z
+      faculty: z
         .object({
           name: updateUserNameValidationSchema.optional(),
-          designation : z.string().nonempty({ message: "Designation is required" }).optional(),
+          designation: z.string().nonempty({ message: "Designation is required" }).optional(),
           gender: z
             .enum(['male', 'female'], {
               errorMap: () => ({ message: "Gender must be either 'male' or 'female'" }),

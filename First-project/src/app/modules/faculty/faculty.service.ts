@@ -31,23 +31,15 @@ const deleteFacultyFromDB = async (id: string) => {
 
         session.startTransaction();
 
-
-
-        const existingUser = await Faculty.findOne({ id })
-
-
-        if (!existingUser) {
-            throw new AppError(httpStatus.NOT_FOUND, "Faculty does not exist!");
-        }
-
-
-        const deletedFaculty = await Faculty.findOneAndUpdate({ id }, { isDeleted: true }, { new: true, session });
+        const deletedFaculty = await Faculty.findOneAndUpdate({id}, { isDeleted: true }, { new: true, session });
 
         if (!deletedFaculty) {
             throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Faculty');
         }
 
-        const deletedUser = await User.findOneAndUpdate({ id }, { isDeleted: true }, { new: true, session });
+        const userId = deletedFaculty.user;
+
+        const deletedUser = await User.findByIdAndUpdate(userId, { isDeleted: true }, { new: true, session });
 
         if (!deletedUser) {
             throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user');
@@ -59,10 +51,10 @@ const deleteFacultyFromDB = async (id: string) => {
 
         return deletedFaculty;
 
-    } catch (err) {
+    } catch (err: any) {
         await session.abortTransaction();
         await session.endSession();
-        throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
+        throw new Error(err);
     }
 }
 
